@@ -1,39 +1,30 @@
 ﻿
+using CinemaGoProject.Menu;
+using CinemaGoProject.Repositories;
+using CinemaGoProject.Services;
+using CinemaGoProject.Repositories;
+using CinemaGoProject.Services;
+using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Proeqt.Repositories;
-using Proeqt.Services;
 
-namespace Proeqt
+namespace CinemaGoProject
 {
     internal class Program
     {
         static void Main(string[] args)
         {
+            IConfiguration configuration = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
             UserRepository userRepository = new UserRepository();
-            UserService userService = new UserService(userRepository);
+            EmailService emailService = new EmailService(configuration);
+            UserService userService = new UserService(userRepository, emailService);
+
             UserMenu userMenu = new UserMenu(userService);
-
-            while (true)
-            {
-                bool loggedIn = userMenu.ShowMainMenu();
-
-                if (!loggedIn)
-                {
-                    break;
-                }
-
-                CinemaGoMenu cinemaGoMenu =
-                    new CinemaGoMenu(userMenu.LoggedInUsername);
-
-                cinemaGoMenu.ShowMenu();
-            }
-
-            Console.WriteLine("Goodbye!");
-            Console.ReadLine();
+            userMenu.ShowMainMenu();
         }
     }
 }
+

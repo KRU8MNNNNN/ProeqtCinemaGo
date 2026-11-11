@@ -1,64 +1,60 @@
 ﻿
-using Proeqt.Models;
-using Proeqt.Services;
+using CinemaGoProject.Models;
+using CinemaGoProject.Services;
+using CinemaGoProject.Exceptions;    
+using CinemaGoProject.Models;
+using CinemaGoProject.Services;
+using CinemaGoProject;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Proeqt
+namespace CinemaGoProject.Menu
 {
     internal class UserMenu
     {
         private readonly UserService _userService;
-
-        public string LoggedInUsername { get; private set; } = "";
 
         public UserMenu(UserService userService)
         {
             _userService = userService;
         }
 
-        public bool ShowMainMenu()
+        public void ShowMainMenu()
         {
-            while (true)
+            string choice = "";
+
+            while (choice != "0")
             {
-                Console.WriteLine("CinemaGo");
+                Console.WriteLine();
+                Console.WriteLine("Welcome to the CinemaGo User Management System");
                 Console.WriteLine("1. Register");
                 Console.WriteLine("2. Login");
                 Console.WriteLine("0. Exit");
                 Console.Write("Choose: ");
 
-                string choice = Console.ReadLine() ?? "";
+                choice = Console.ReadLine() ?? "";
 
                 switch (choice)
                 {
                     case "1":
-                        if (Register())
-                        {
-                            return true;
-                        }
+                        ShowRegisterMenu();
                         break;
 
                     case "2":
-                        if (Login())
-                        {
-                            return true;
-                        }
+                        ShowLoginMenu();
                         break;
 
                     case "0":
-                        return false;
+                        Console.WriteLine("Goodbye!");
+                        break;
 
                     default:
-                        Console.WriteLine("Invalid choice!");
+                        Console.WriteLine("Invalid choice. Please try again.");
                         break;
                 }
             }
         }
 
-        private bool Register()
+        private void ShowRegisterMenu()
         {
             User user = new User();
 
@@ -66,35 +62,53 @@ namespace Proeqt
             user.Name = Console.ReadLine() ?? "";
 
             Console.Write("Enter email: ");
-            user.Email = Console.ReadLine() ?? "";
+
+            try
+            {
+                user.Email = Console.ReadLine() ?? "";
+            }
+            catch (InvalidEmailException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return;
+            }
 
             Console.Write("Enter password: ");
             user.Password = Console.ReadLine() ?? "";
 
-            if (_userService.RegisterUser(user))
-            {
-                LoggedInUsername = user.Name;
-                return true;
-            }
+            bool registered = _userService.RegisterUser(user);
 
-            return false;
+            if (registered)
+            {
+                Console.Write("Enter verification code sent to your email: ");
+                string code = Console.ReadLine() ?? "";
+
+                if (_userService.VerifyUser(user.Email, code))
+                {
+                    Console.WriteLine("Your account has been verified!");
+                }
+            }
         }
 
-        private bool Login()
+        private void ShowLoginMenu()
         {
-            Console.Write("Enter username: ");
-            string username = Console.ReadLine() ?? "";
+            Console.Write("Enter email: ");
+            string email = Console.ReadLine() ?? "";
 
             Console.Write("Enter password: ");
             string password = Console.ReadLine() ?? "";
 
-            if (_userService.LoginUser(username, password))
-            {
-                LoggedInUsername = username;
-                return true;
-            }
+            User user = _userService.LoginUser(email, password);
 
-            return false;
+            if (user != null)
+            {
+                CinemaGoMenu cinemaGoMenu = new CinemaGoMenu(user.Name);
+                cinemaGoMenu.ShowMenu();
+            }
+            else
+            {
+                Console.WriteLine("Invalid email or password, or account not verified.");
+            }
         }
     }
 }

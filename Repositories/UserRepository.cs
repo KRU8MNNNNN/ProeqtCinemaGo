@@ -1,114 +1,117 @@
 ﻿
-using Proeqt.Models;
+using CinemaGoProject.Models;
+using CinemaGoProject.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Proeqt.Repositories
+namespace CinemaGoProject.Repositories
 {
     internal class UserRepository
     {
-        private readonly string _filePath =
-            @"C:\Users\595-424-424 Temo\source\repos\Proeqt\Data\users.txt";
-
-        public UserRepository()
-        {
-            Directory.CreateDirectory(
-                Path.GetDirectoryName(_filePath));
-
-            List<string> oldFiles = new List<string>
-            {
-                Path.Combine(Directory.GetCurrentDirectory(), "Data", "users.txt"),
-                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "users.txt"),
-                _filePath
-            };
-
-            List<User> users = new List<User>();
-
-            foreach (string file in oldFiles.Distinct(
-                StringComparer.OrdinalIgnoreCase))
-            {
-                if (!File.Exists(file))
-                {
-                    continue;
-                }
-
-                foreach (string line in File.ReadAllLines(file))
-                {
-                    string[] elements = line.Split('|');
-
-                    if (elements.Length != 4 ||
-                        !int.TryParse(elements[0], out int id))
-                    {
-                        continue;
-                    }
-
-                    if (users.Any(u =>
-                        u.Name.Equals(elements[1],
-                            StringComparison.OrdinalIgnoreCase) ||
-                        u.Email.Equals(elements[2],
-                            StringComparison.OrdinalIgnoreCase)))
-                    {
-                        continue;
-                    }
-
-                    users.Add(new User
-                    {
-                        Id = id,
-                        Name = elements[1],
-                        Email = elements[2],
-                        Password = elements[3]
-                    });
-                }
-            }
-
-            for (int i = 0; i < users.Count; i++)
-            {
-                users[i].Id = i + 1;
-            }
-
-            File.WriteAllLines(_filePath, users.Select(u =>
-                $"{u.Id}|{u.Name}|{u.Email}|{u.Password}"));
-
-            Console.WriteLine("Accounts migrated: " + users.Count);
-            Console.WriteLine("Users file: " + _filePath);
-        }
+        private readonly string _filePath = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory, "Data", "user.txt");
 
         public void SaveUser(User user)
         {
-            File.AppendAllLines(_filePath, new[]
-            {
-                $"{user.Id}|{user.Name}|{user.Email}|{user.Password}"
-            });
+            Directory.CreateDirectory(Path.GetDirectoryName(_filePath));
+            File.AppendAllLines(_filePath, new[] { user.ToString() });
         }
 
         public List<User> GetAllUsers()
         {
             List<User> users = new List<User>();
 
-            foreach (string line in File.ReadAllLines(_filePath))
+            if (!File.Exists(_filePath))
             {
-                string[] elements = line.Split('|');
+                return users;
+            }
 
-                if (elements.Length != 4 ||
-                    !int.TryParse(elements[0], out int id))
+            var lines = File.ReadAllLines(_filePath);
+
+            foreach (var item in lines)
+            {
+                var line = item.Split('|');
+
+                if (line.Length != 7)
                 {
                     continue;
                 }
 
-                users.Add(new User
-                {
-                    Id = id,
-                    Name = elements[1],
-                    Email = elements[2],
-                    Password = elements[3]
-                });
+                User user = new User();
+
+                user.Id = int.Parse(line[0]);
+                user.Name = line[1];
+                user.Email = line[2];
+                user.Password = line[3];
+                user.IsLogged = bool.Parse(line[4]);
+                user.VerificationCode = line[5];
+                user.IsVerified = bool.Parse(line[6]);
+
+                users.Add(user);
             }
 
             return users;
+        }
+
+        public bool VerifyUser(string email, string verificationCode)
+        {
+            var users = GetAllUsers();
+
+            User user = users.FirstOrDefault(
+                x => x.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+
+            if (user == null)
+            {
+                Console.WriteLine("User not found.");
+                return false;
+            }
+
+            if (user.VerificationCode != verificationCode)
+            {
+                Console.WriteLine("Verification code is not correct.");
+                return false;
+            }
+
+            user.IsVerified = true;
+            user.VerificationCode = "";
+
+            SaveAllUsers(users);
+
+            Console.WriteLine("User verified successfully.");
+
+            return true;
+        }
+
+        public void UpdateUser(User user)
+        {
+            var users = GetAllUsers();
+
+            User existingUser = users.FirstOrDefault(x => x.Id == user.Id);
+
+            if (existingUser == null)
+            {
+                return;
+            }
+
+            existingUser.IsLogged = user.IsLogged;
+
+            SaveAllUsers(users);
+        }
+
+        private void SaveAllUsers(List<User> users)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(_filePath));
+
+            string[] userText = new string[users.Count];
+
+            for (int i = 0; i < users.Count; i++)
+            {
+                userText[i] = users[i].ToString();
+            }
+
+            File.WriteAllLines(_filePath, userText);
         }
     }
 }
