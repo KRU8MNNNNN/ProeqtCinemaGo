@@ -1,6 +1,4 @@
-﻿
-using CinemaGoProject.Models;
-using CinemaGoProject.Models;
+﻿using CinemaGoProject.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;

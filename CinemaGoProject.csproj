@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B6A68ED3-753A-4F00-AB06-C08585298D53}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Proeqt</RootNamespace>
-    <AssemblyName>Proeqt</AssemblyName>
+    <RootNamespace>CinemaGoProject</RootNamespace>
+    <AssemblyName>CinemaGoProject</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="BCrypt-Net-Next, Version=4.2.0.0, Culture=neutral, PublicKeyToken=1e11be04b6288443, processorArchitecture=MSIL">
       <HintPath>packages\BCrypt.Net-Next.4.2.0\lib\net472\BCrypt-Net-Next.dll</HintPath>
@@ -46,6 +49,9 @@
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=10.0.0.14, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.10.0.14\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.TimeProvider, Version=10.0.0.8, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Bcl.TimeProvider.10.0.8\lib\net462\Microsoft.Bcl.TimeProvider.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.Configuration, Version=10.0.0.14, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Extensions.Configuration.10.0.14\lib\net462\Microsoft.Extensions.Configuration.dll</HintPath>
@@ -73,6 +79,12 @@
     </Reference>
     <Reference Include="MimeKit, Version=4.18.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
       <HintPath>packages\MimeKit.4.18.2\lib\net47\MimeKit.dll</HintPath>
+    </Reference>
+    <Reference Include="Spectre.Console, Version=0.0.0.0, Culture=neutral, PublicKeyToken=170fe27f8af98a30, processorArchitecture=MSIL">
+      <HintPath>packages\Spectre.Console.0.57.2\lib\netstandard2.0\Spectre.Console.dll</HintPath>
+    </Reference>
+    <Reference Include="Spectre.Console.Ansi, Version=0.0.0.0, Culture=neutral, PublicKeyToken=170fe27f8af98a30, processorArchitecture=MSIL">
+      <HintPath>packages\Spectre.Console.Ansi.0.57.2\lib\netstandard2.0\Spectre.Console.Ansi.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -114,8 +126,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CinemaGoMenu.cs" />
+    <Compile Include="Exceptions\EmailNullexception.cs" />
     <Compile Include="Exceptions\InvalidEmailException.cs" />
+    <Compile Include="Exceptions\InvalidVerificationCodeException.cs" />
+    <Compile Include="Exceptions\PasswordNotMatchException.cs" />
+    <Compile Include="Exceptions\PasswordNullException.cs" />
+    <Compile Include="Exceptions\UserEmailException.cs" />
+    <Compile Include="Exceptions\UserNotFoundException.cs" />
+    <Compile Include="Exceptions\VerificationCodeNullException.cs" />
+    <Compile Include="Menu\ClientMenu.cs" />
+    <Compile Include="Menu\UserMenu.cs" />
     <Compile Include="Models\Film.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Program.cs" />
@@ -126,15 +146,17 @@
     <Compile Include="Services\FilmService.cs" />
     <Compile Include="Services\IEmailService.cs" />
     <Compile Include="Services\UserService.cs" />
-    <Compile Include="UserMenu.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="appsettings.json" />
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
+    <Content Include="Data\film.txt" />
     <Content Include="Data\users.txt" />
   </ItemGroup>
   <ItemGroup />

@@ -1,7 +1,4 @@
-﻿
-using CinemaGoProject.Menu;
-using CinemaGoProject.Repositories;
-using CinemaGoProject.Services;
+﻿using CinemaGoProject.Menu;
 using CinemaGoProject.Repositories;
 using CinemaGoProject.Services;
 using Microsoft.Extensions.Configuration;
@@ -22,9 +19,12 @@ namespace CinemaGoProject
             EmailService emailService = new EmailService(configuration);
             UserService userService = new UserService(userRepository, emailService);
 
-            UserMenu userMenu = new UserMenu(userService);
+            FilmRepository filmRepository = new FilmRepository();
+            FilmService filmService = new FilmService(filmRepository);
+            ClientMenu clientMenu = new ClientMenu(filmService);
+
+            UserMenu userMenu = new UserMenu(userService, clientMenu);
             userMenu.ShowMainMenu();
         }
     }
 }
-

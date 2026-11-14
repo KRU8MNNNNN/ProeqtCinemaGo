@@ -1,6 +1,5 @@
 ﻿
 using CinemaGoProject.Exceptions;
-using CinemaGoProject.Exceptions;
 
 namespace CinemaGoProject.Models
 {

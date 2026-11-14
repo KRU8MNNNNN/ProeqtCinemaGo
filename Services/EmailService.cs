@@ -1,5 +1,4 @@
-﻿
-using MailKit.Net.Smtp;
+﻿using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 
@@ -33,19 +32,20 @@ namespace CinemaGoProject.Services
                 Text = message
             };
 
-            using var client = new SmtpClient();
+            using (var client = new SmtpClient())
+            {
+                client.Connect(
+                    emailSettings["Server"],
+                    int.Parse(emailSettings["Port"]),
+                    MailKit.Security.SecureSocketOptions.StartTls);
 
-            client.Connect(
-                emailSettings["Server"],
-                int.Parse(emailSettings["Port"]),
-                MailKit.Security.SecureSocketOptions.StartTls);
+                client.Authenticate(
+                    emailSettings["SenderEmail"],
+                    emailSettings["Password"]);
 
-            client.Authenticate(
-                emailSettings["SenderEmail"],
-                emailSettings["Password"]);
-
-            client.Send(email);
-            client.Disconnect(true);
+                client.Send(email);
+                client.Disconnect(true);
+            }
         }
     }
 }

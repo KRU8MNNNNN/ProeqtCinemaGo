@@ -1,6 +1,5 @@
 ﻿
 using CinemaGoProject.Models;
-using CinemaGoProject.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -53,6 +52,21 @@ namespace CinemaGoProject.Repositories
             }
 
             return users;
+        }
+
+        public void ChangeFile(List<string> usersInString)
+        {
+            File.WriteAllText(_filePath, "");
+            File.AppendAllLines(_filePath, usersInString);
+        }
+
+        public User GetUserByEmail(string email)
+        {
+            var users = GetAllUsers();
+
+            var user = users.FirstOrDefault(x => x.Email == email);
+
+            return user;
         }
 
         public bool VerifyUser(string email, string verificationCode)

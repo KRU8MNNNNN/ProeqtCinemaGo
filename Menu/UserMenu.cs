@@ -1,10 +1,6 @@
-﻿
-using CinemaGoProject.Models;
+﻿using CinemaGoProject.Models;
 using CinemaGoProject.Services;
-using CinemaGoProject.Exceptions;    
-using CinemaGoProject.Models;
-using CinemaGoProject.Services;
-using CinemaGoProject;
+using CinemaGoProject.Exceptions;
 using System;
 
 namespace CinemaGoProject.Menu
@@ -12,10 +8,12 @@ namespace CinemaGoProject.Menu
     internal class UserMenu
     {
         private readonly UserService _userService;
+        private readonly ClientMenu _clientMenu;
 
-        public UserMenu(UserService userService)
+        public UserMenu(UserService userService, ClientMenu clientMenu)
         {
             _userService = userService;
+            _clientMenu = clientMenu;
         }
 
         public void ShowMainMenu()
@@ -25,10 +23,10 @@ namespace CinemaGoProject.Menu
             while (choice != "0")
             {
                 Console.WriteLine();
-                Console.WriteLine("Welcome to the CinemaGo User Management System");
+                Console.WriteLine("Welcome to CinemaGo");
                 Console.WriteLine("1. Register");
                 Console.WriteLine("2. Login");
-                Console.WriteLine("0. Exit");
+                Console.WriteLine("0. Exit");s
                 Console.Write("Choose: ");
 
                 choice = Console.ReadLine() ?? "";
@@ -62,31 +60,29 @@ namespace CinemaGoProject.Menu
             user.Name = Console.ReadLine() ?? "";
 
             Console.Write("Enter email: ");
-
-            try
-            {
-                user.Email = Console.ReadLine() ?? "";
-            }
-            catch (InvalidEmailException ex)
-            {
-                Console.WriteLine(ex.Message);
-                return;
-            }
+            user.Email = Console.ReadLine() ?? "";
 
             Console.Write("Enter password: ");
             user.Password = Console.ReadLine() ?? "";
 
-            bool registered = _userService.RegisterUser(user);
-
-            if (registered)
+            try
             {
+                _userService.RegisterUser(user);
+
                 Console.Write("Enter verification code sent to your email: ");
                 string code = Console.ReadLine() ?? "";
 
-                if (_userService.VerifyUser(user.Email, code))
-                {
-                    Console.WriteLine("Your account has been verified!");
-                }
+                _userService.VerifyUser(user.Email, code);
+
+                Console.WriteLine("Your account has been verified!");
+
+                _userService.LoginUser(user.Email, user.Password);
+
+                _clientMenu.ShowMainFilmMenu();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
 
@@ -98,16 +94,14 @@ namespace CinemaGoProject.Menu
             Console.Write("Enter password: ");
             string password = Console.ReadLine() ?? "";
 
-            User user = _userService.LoginUser(email, password);
-
-            if (user != null)
+            try
             {
-                CinemaGoMenu cinemaGoMenu = new CinemaGoMenu(user.Name);
-                cinemaGoMenu.ShowMenu();
+                _userService.LoginUser(email, password);
+                _clientMenu.ShowMainFilmMenu();
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine("Invalid email or password, or account not verified.");
+                Console.WriteLine(ex.Message);
             }
         }
     }
