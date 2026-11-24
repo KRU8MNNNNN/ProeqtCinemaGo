@@ -1,1 +1,8 @@
-﻿
+﻿1|Dark Knight|Batman vs Joker aura|Action
+2|Fight Club|Office worker forms an underground fight club|Drama
+3|Terrifier|Evil clown+gore|Horror
+4|Titanic|Two strangers fall in love in titanic|Romance
+5|Avengers Doomsday|Marvel heroes unite and face dr.doom|Action
+6|The Godfather|Mafia story|Crime
+7|The Truman Show|Man discovers he is in a simulation|Drama
+8|Backrooms|People discover a strange dimension with yellow walls|Horror

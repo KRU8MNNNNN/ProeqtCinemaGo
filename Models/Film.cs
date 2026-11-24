@@ -1,5 +1,4 @@
-﻿
-namespace CinemaGoProject.Models
+﻿namespace CinemaGoProject.Models
 {
     internal class Film
     {
@@ -9,9 +8,11 @@ namespace CinemaGoProject.Models
 
         public string Description { get; set; } = "";
 
+        public string Genre { get; set; } = "";
+
         public override string ToString()
         {
-            return $"{Id}|{Name}|{Description}";
+            return $"{Id}|{Name}|{Description}|{Genre}";
         }
     }
 }

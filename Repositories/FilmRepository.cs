@@ -9,7 +9,10 @@ namespace CinemaGoProject.Repositories
     internal class FilmRepository
     {
         private readonly string _filePath = Path.Combine(
-            AppDomain.CurrentDomain.BaseDirectory, "Data", "film.txt");
+            Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory)
+                .Parent.Parent.FullName,
+            "Data",
+            "film.txt");
 
         public void SaveFilm(Film film)
         {
@@ -32,7 +35,7 @@ namespace CinemaGoProject.Repositories
             {
                 var line = item.Split('|');
 
-                if (line.Length != 3)
+                if (line.Length != 3 && line.Length != 4)
                 {
                     continue;
                 }
@@ -42,6 +45,7 @@ namespace CinemaGoProject.Repositories
                 film.Id = int.Parse(line[0]);
                 film.Name = line[1];
                 film.Description = line[2];
+                film.Genre = line.Length == 4 ? line[3] : "Uncategorized";
 
                 films.Add(film);
             }
@@ -87,6 +91,7 @@ namespace CinemaGoProject.Repositories
 
             filmToUpdate.Name = film.Name;
             filmToUpdate.Description = film.Description;
+            filmToUpdate.Genre = film.Genre;
 
             SaveAllFilms(films);
         }

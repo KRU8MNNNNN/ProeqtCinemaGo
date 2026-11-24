@@ -1,6 +1,7 @@
 ﻿using CinemaGoProject.Models;
 using CinemaGoProject.Repositories;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CinemaGoProject.Services
 {
@@ -21,6 +22,22 @@ namespace CinemaGoProject.Services
         public Film GetFilmById(int id)
         {
             return _filmRepository.GetFilmById(id);
+        }
+
+        public List<string> GetGenres()
+        {
+            return GetAllFilms()
+                .Select(x => x.Genre)
+                .Distinct()
+                .OrderBy(x => x)
+                .ToList();
+        }
+
+        public List<Film> GetFilmsByGenre(string genre)
+        {
+            return GetAllFilms()
+                .Where(x => x.Genre.Equals(genre, System.StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
 
         public void AddFilm(Film film)

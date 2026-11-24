@@ -29,7 +29,8 @@ namespace CinemaGoProject.Services
 
             var users = _userRepository.GetAllUsers();
 
-            if (users.Any(x => x.Email == user.Email))
+            if (users.Any(x => x.Email.Equals(
+                user.Email, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new UsedEmailException();
             }
@@ -39,13 +40,23 @@ namespace CinemaGoProject.Services
                 : 0;
 
             user.Id = ++maxId;
-
-            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            user.Role = "Customer";
 
             Random random = new Random();
             var randomCode = random.Next(1000, 10000);
 
             user.VerificationCode = randomCode.ToString();
+
+            User savedUser = new Customer();
+
+            savedUser.Id = user.Id;
+            savedUser.Name = user.Name;
+            savedUser.Email = user.Email;
+            savedUser.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            savedUser.Role = user.Role;
+            savedUser.IsLogged = false;
+            savedUser.VerificationCode = user.VerificationCode;
+            savedUser.IsVerified = false;
 
             string welcomeHtmlMessage = $@"
 <!DOCTYPE html>
@@ -111,7 +122,7 @@ namespace CinemaGoProject.Services
                 welcomeHtmlMessage
             );
 
-            _userRepository.SaveUser(user);
+            _userRepository.SaveUser(savedUser);
         }
 
         public void VerifyUser(string email, string verificationCode)
@@ -126,49 +137,43 @@ namespace CinemaGoProject.Services
                 throw new VerificationCodeNullException();
             }
 
-            _userRepository.VerifyUser(email, verificationCode);
+            bool isVerified = _userRepository.VerifyUser(
+                email, verificationCode);
+
+            if (!isVerified)
+            {
+                throw new VerificationCodeNullException();
+            }
         }
 
-        public void LoginUser(string email, string passwiord)
+        public User LoginUser(string email, string password)
         {
             if (string.IsNullOrWhiteSpace(email))
             {
                 throw new EmailNullexception();
             }
 
-            if (string.IsNullOrWhiteSpace(passwiord))
+            if (string.IsNullOrWhiteSpace(password))
             {
                 throw new PasswordNullexception();
             }
 
-            var userFromFile = _userRepository.GetUserByEmail(email);
+            User userFromFile = _userRepository.GetUserByEmail(email);
 
             if (userFromFile != null &&
-                BCrypt.Net.BCrypt.Verify(passwiord, userFromFile.Password) &&
+                BCrypt.Net.BCrypt.Verify(password, userFromFile.Password) &&
                 userFromFile.IsVerified)
             {
+                userFromFile.IsLogged = true;
+
+                _userRepository.UpdateUser(userFromFile);
+
                 Console.WriteLine("Logged In successfully");
 
-                var users = _userRepository.GetAllUsers();
-
-                List<string> userInStrings = new List<string>();
-
-                foreach (var item in users)
-                {
-                    if (item.Email == email)
-                    {
-                        item.IsLogged = true;
-                    }
-
-                    userInStrings.Add(item.ToString());
-                }
-
-                _userRepository.ChangeFile(userInStrings);
+                return userFromFile;
             }
-            else
-            {
-                throw new PasswordNotMatchException();
-            }
+
+            throw new PasswordNotMatchException();
         }
     }
 }

@@ -134,17 +134,34 @@
     <Compile Include="Exceptions\UserEmailException.cs" />
     <Compile Include="Exceptions\UserNotFoundException.cs" />
     <Compile Include="Exceptions\VerificationCodeNullException.cs" />
+    <Compile Include="Menu\AdminMenu.cs" />
     <Compile Include="Menu\ClientMenu.cs" />
     <Compile Include="Menu\UserMenu.cs" />
+    <Compile Include="Models\Admin.cs" />
+    <Compile Include="Models\Booking.cs" />
+    <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\Film.cs" />
+    <Compile Include="Models\Hall.cs" />
+    <Compile Include="Models\Seat.cs" />
+    <Compile Include="Models\Session.cs" />
+    <Compile Include="Models\StandardTicket.cs" />
+    <Compile Include="Models\Ticket.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\VipTicket.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\BookingRepository.cs" />
     <Compile Include="Repositories\FilmRepository.cs" />
+    <Compile Include="Repositories\SeatRepository.cs" />
+    <Compile Include="Repositories\SessionRepository.cs" />
     <Compile Include="Repositories\UserRepository.cs" />
+    <Compile Include="Services\BookingService.cs" />
     <Compile Include="Services\EmailService.cs" />
     <Compile Include="Services\FilmService.cs" />
     <Compile Include="Services\IEmailService.cs" />
+    <Compile Include="Services\Logger.cs" />
+    <Compile Include="Services\SessionService.cs" />
+    <Compile Include="Services\StatisticsService.cs" />
     <Compile Include="Services\UserService.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -156,7 +173,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
+    <Content Include="Data\bookings.txt" />
     <Content Include="Data\film.txt" />
+    <Content Include="Data\logs.txt" />
+    <Content Include="Data\seats.txt" />
+    <Content Include="Data\sessions.txt" />
     <Content Include="Data\users.txt" />
   </ItemGroup>
   <ItemGroup />

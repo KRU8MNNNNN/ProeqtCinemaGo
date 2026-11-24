@@ -1,0 +1,18 @@
+﻿22/11/2026 21:24:05 | User registered
+22/11/2026 21:24:14 | User email verified
+22/11/2026 21:24:14 | User logged in | User ID: 4
+22/11/2026 21:24:14 | Customer opened menu | User ID: 4
+22/11/2026 21:24:36 | Booking failed | User ID: 4 | Invalid seat row
+22/11/2026 21:24:41 | Booking failed | User ID: 4 | Invalid session ID
+22/11/2026 21:24:52 | Booking created | User ID: 4 | Booking ID: 2 | Session: 1 | Seat: A1 | Original price: 5000 | Discount: 0 | Final price: 5000
+22/11/2026 21:25:44 | Booking failed | User ID: 4 | Invalid ticket type: g
+22/11/2026 21:26:00 | Booking failed | User ID: 4 | Error: This seat is already booked.
+22/11/2026 21:26:14 | Booking cancelled | User ID: 4 | Booking ID: 2
+22/11/2026 21:26:28 | Customer logged out | User ID: 4
+22/11/2026 21:26:28 | User logged out | User ID: 4
+22/11/2026 21:26:46 | User logged in | User ID: 1
+22/11/2026 21:26:47 | Admin opened the admin panel
+22/11/2026 21:29:44 | Login failed | Error: There is not enough space on the disk.
+
+22/11/2026 22:51:58 | Registration or verification failed | Error: Invalid email address.
+22/11/2026 22:52:06 | Registration or verification failed | Error: Invalid domain token at offset 2

@@ -1,5 +1,4 @@
-﻿
-using CinemaGoProject.Exceptions;
+﻿using CinemaGoProject.Exceptions;
 
 namespace CinemaGoProject.Models
 {
@@ -27,15 +26,21 @@ namespace CinemaGoProject.Models
 
         public string Password { get; set; } = "";
 
+        public string Role { get; set; } = "Customer";
+
         public bool IsLogged { get; set; } = false;
 
         public string VerificationCode { get; set; } = "";
 
         public bool IsVerified { get; set; } = false;
 
+        public virtual void DisplayMenu()
+        {
+        }
+
         public override string ToString()
         {
-            return $"{Id}|{Name}|{Email}|{Password}|{IsLogged}|{VerificationCode}|{IsVerified}";
+            return $"{Id}|{Name}|{Email}|{Password}|{Role}|{IsLogged}|{VerificationCode}|{IsVerified}";
         }
     }
 }

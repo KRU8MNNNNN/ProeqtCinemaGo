@@ -1,5 +1,4 @@
-﻿
-using CinemaGoProject.Models;
+﻿using CinemaGoProject.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +9,10 @@ namespace CinemaGoProject.Repositories
     internal class UserRepository
     {
         private readonly string _filePath = Path.Combine(
-            AppDomain.CurrentDomain.BaseDirectory, "Data", "user.txt");
+            Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory)
+                .Parent.Parent.FullName,
+            "Data",
+            "users.txt");
 
         public void SaveUser(User user)
         {
@@ -33,22 +35,54 @@ namespace CinemaGoProject.Repositories
             {
                 var line = item.Split('|');
 
-                if (line.Length != 7)
+                try
+                {
+                    User user;
+
+                    if (line.Length == 7)
+                    {
+                        user = new Customer();
+
+                        user.Id = int.Parse(line[0]);
+                        user.Name = line[1];
+                        user.Email = line[2];
+                        user.Password = line[3];
+                        user.IsLogged = bool.Parse(line[4]);
+                        user.VerificationCode = line[5];
+                        user.IsVerified = bool.Parse(line[6]);
+                    }
+                    else if (line.Length == 8)
+                    {
+                        if (line[4].Equals("Admin",
+                            StringComparison.OrdinalIgnoreCase))
+                        {
+                            user = new Admin();
+                        }
+                        else
+                        {
+                            user = new Customer();
+                        }
+
+                        user.Id = int.Parse(line[0]);
+                        user.Name = line[1];
+                        user.Email = line[2];
+                        user.Password = line[3];
+                        user.Role = line[4];
+                        user.IsLogged = bool.Parse(line[5]);
+                        user.VerificationCode = line[6];
+                        user.IsVerified = bool.Parse(line[7]);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+
+                    users.Add(user);
+                }
+                catch
                 {
                     continue;
                 }
-
-                User user = new User();
-
-                user.Id = int.Parse(line[0]);
-                user.Name = line[1];
-                user.Email = line[2];
-                user.Password = line[3];
-                user.IsLogged = bool.Parse(line[4]);
-                user.VerificationCode = line[5];
-                user.IsVerified = bool.Parse(line[6]);
-
-                users.Add(user);
             }
 
             return users;
@@ -56,17 +90,16 @@ namespace CinemaGoProject.Repositories
 
         public void ChangeFile(List<string> usersInString)
         {
-            File.WriteAllText(_filePath, "");
-            File.AppendAllLines(_filePath, usersInString);
+            Directory.CreateDirectory(Path.GetDirectoryName(_filePath));
+            File.WriteAllLines(_filePath, usersInString);
         }
 
         public User GetUserByEmail(string email)
         {
             var users = GetAllUsers();
 
-            var user = users.FirstOrDefault(x => x.Email == email);
-
-            return user;
+            return users.FirstOrDefault(
+                x => x.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
         }
 
         public bool VerifyUser(string email, string verificationCode)
